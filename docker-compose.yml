@@ -1,0 +1,32 @@
+version: '3'
+services:
+    application:
+        build: apache
+        container_name: symfony
+        ports:
+            - '80:80'
+        volumes:
+            - './apache/apache2.conf:/etc/apache2/apache2.conf'
+            - './apache/sites-enabled:/etc/apache2/sites-enabled'
+            - './application:/var/www/html'
+    mysql:
+        image: mysql:5.7
+        container_name: mysql
+        environment:
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+            - MYSQL_DATABASE=symfony-cron-test
+        volumes:
+            - './persistent-data:/var/lib/mysql:rw'
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin
+        ports:
+            - '81:80'
+        depends_on:
+            - mysql
+        environment:
+            - PMA_ARBITRARY=1
+            - PMA_HOST=mysql
+            - PMA_USER=root
+            - PMA_PASSWORD=
+            - PMA_ABSOLUTE_URI=phpmyadmin
